@@ -1,23 +1,29 @@
 const Splitter = artifacts.require("Splitter");
-var ethers = require("ethers");
-var utils = require("ethers").utils;
+
+const { toBN, toWei } = web3.utils;
+const utils = require("ethers").utils;
 
 // console.log(ethers.utils.formatBytes32String("DE LA CRUZ"));
-var alice, bob, carol;
-var instanceSplitter;
+// var alice, bob, carol;
+// var instanceSplitter;
 
 contract("Splitter", accounts => {
-  alice = accounts[0];
-  bob = accounts[1];
-  carol = accounts[2];
-  const sendAmount = utils.parseEther("5.0");
+  const weiSendAmount = utils.parseEther("1");
+  let splitter, alice, bob, carol, otherAcct;
+
+  [alice, bob, carol, otherAcct] = accounts;
+
+  beforeEach("deploy new Splitter", function() {
+    return Splitter.new({ from: alice }).then(
+      instance => (splitter = instance)
+    );
+  });
 
   //members should be set
   it("Should be able to split amount amount two members", async () => {
-    instanceSplitter = await Splitter.deployed();
-    let result = await instanceSplitter.splitEth(bob, carol, {
+    const result = await splitter.splitEth(bob, carol, {
       from: alice,
-      value: sendAmount
+      value: weiSendAmount
     });
 
     assert.equal(
@@ -28,25 +34,43 @@ contract("Splitter", accounts => {
   });
 
   it("Get Balance by Address (BOB)", async () => {
-    let weiAmountResult = await instanceSplitter.getBalanceByAddress(bob);
-    let etherHalf = sendAmount / 2;
-    let etherResult = weiAmountResult; //utils.formatEther(weiAmountResult.toString());
-    assert.equal(etherResult, etherHalf, "Balance is not splitted for Bob.");
+    const result = await splitter.splitEth(bob, carol, {
+      from: alice,
+      value: weiSendAmount
+    });
+
+    const bobWei = await splitter.balances(carol);
+    let weiHalf = weiSendAmount / 2;
+    assert.equal(weiHalf, bobWei, "Balance is not splitted for Bob.");
   });
 
   it("Get Balance by Address (Carol)", async () => {
-    let weiAmountResult = await instanceSplitter.getBalanceByAddress(carol);
-    let etherHalf = sendAmount / 2;
-    let etherResult = weiAmountResult;
-    assert.equal(etherResult, etherHalf, "Balance is not splitted for Carol.");
+    const result = await splitter.splitEth(bob, carol, {
+      from: alice,
+      value: weiSendAmount
+    });
+
+    const carolWei = await splitter.balances(carol);
+    let weiHalf = weiSendAmount / 2;
+    assert.equal(weiHalf, carolWei, "Balance is not splitted for Carol.");
   });
 
-  it("Get Balance in Smart Contract ", async () => {
-    let weiAmountResult = await instanceSplitter.getBalance();
-    let etherResult = utils.formatEther(weiAmountResult.toString());
-    //Balance Smart Contract Equal to Value Splitter
-    console.log("Balance in Smart Contract: " + etherResult);
-  });
+  //members should be set
+  it("Should be able to withdraw Funds", async () => {
+    await splitter.splitEth(bob, carol, {
+      from: alice,
+      value: weiSendAmount
+    });
+    const weiAmountwithdraw = utils.parseEther("0.5");
 
-  // console.log(alice);
+    const result = await splitter.withdrawFunds(weiAmountwithdraw, {
+      from: bob
+    });
+
+    assert.equal(
+      result.receipt.status,
+      true,
+      "withdraw Funds did not return true"
+    );
+  });
 });
