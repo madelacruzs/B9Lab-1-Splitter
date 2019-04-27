@@ -1,24 +1,27 @@
 pragma solidity ^0.5.0;
 import './SafeMath.sol';
+import './Pausable.sol';
 
-contract Splitter {
+contract Splitter is Pausable {
     
     using SafeMath for uint; 
 
     mapping (address => uint) public balances;
 
     event LogSplitter(address indexed sender, address indexed bob, address indexed carol, uint amount);
-    event LogWithdraw(address who, uint amount, bool success);
+    event LogWithdraw(address who);
 
     constructor() public {
     }
 
     //Split ETH from Alice
-    function splitEth(address _bob, address _carol) public payable returns (bool success){
+    function splitEth(address _bob, address _carol) public whenNotPaused payable returns (bool success){
         require(_bob != address(0) , "Bob's accounts can not be empty.");
         require(_carol != address(0), "Carol's accounts can not be empty.");
 
         require(msg.value > 0,"Ether is required");
+        require(msg.value > 1,"Insufficient balance.");
+
 
         //Split
         uint half = msg.value / 2;
@@ -35,12 +38,12 @@ contract Splitter {
     }
 
     // The Solidity Withdrawal Pattern. Blog's Rob Hitchens
-    function withdrawFunds(uint amount) public returns(bool success) { 
+    function withdrawFunds(uint amount) public whenNotPaused returns(bool success) { 
         // guards up front  
         require(balances[msg.sender] >= amount,"balance insufficient"); 
         // transfer
         balances[msg.sender] -= amount;        
-        emit LogWithdraw(msg.sender, amount, true);
+        emit LogWithdraw(msg.sender);
         msg.sender.transfer(amount);
         return true;
     }
