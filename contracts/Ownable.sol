@@ -4,13 +4,12 @@ contract Ownable {
   
   address public owner;
 
-  constructor() public{
-    owner = msg.sender;
+  constructor(address sender) public{
+    owner = sender;
   }
 
   modifier onlyOwner() {
     require(msg.sender == owner);
     _;
   }
-  
 }

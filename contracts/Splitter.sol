@@ -2,7 +2,7 @@ pragma solidity ^0.5.0;
 import './SafeMath.sol';
 import './Pausable.sol';
 
-contract Splitter is Pausable {
+contract Splitter is Pausable (false) {
     using SafeMath for uint; 
 
     mapping (address => uint) public balances;
@@ -18,7 +18,6 @@ contract Splitter is Pausable {
         require(_bob != address(0),"Bob's accounts can not be empty.");
         require(_carol != address(0), "Carol's accounts can not be empty.");
 
-        require(msg.value > 0,"Ether is required");
         require(msg.value > 1,"Insufficient balance.");
 
 

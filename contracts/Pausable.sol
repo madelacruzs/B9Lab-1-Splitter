@@ -3,25 +3,29 @@ import './Ownable.sol';
 
 contract Pausable is Ownable {
     
-  event Pause();
-  event Unpause();
-  bool public paused = false;
+  event Pause(address account);
+  event Unpause(address account);
+  bool public _paused;
+
+  constructor(bool paused) Ownable (msg.sender) public {
+    _paused = paused;
+  }
 
   modifier whenNotPaused() {
-    require(!paused);
+    require(!_paused);
     _;
   }
   modifier whenPaused() {
-    require(paused);
+    require(_paused);
     _;
   }
   function pause() public onlyOwner whenNotPaused {
-    paused = true;
-    emit Pause();
+    _paused = true;
+    emit Pause(msg.sender);
   }
 
   function unpause() public onlyOwner whenPaused {
-    paused = false;
-    emit Unpause();
+    _paused = false;
+    emit Unpause(msg.sender);
   }
 }
