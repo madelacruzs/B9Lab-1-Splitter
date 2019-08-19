@@ -7,8 +7,8 @@ contract Pausable is Ownable {
   event Unpause(address account);
   bool public _paused;
 
-  constructor(bool paused) Ownable (msg.sender) public {
-    _paused = paused;
+  constructor() Ownable (msg.sender) public {
+        _paused = false;
   }
 
   modifier whenNotPaused() {

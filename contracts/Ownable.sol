@@ -4,8 +4,8 @@ contract Ownable {
   
   address public owner;
 
-  constructor(address sender) public{
-    owner = sender;
+  constructor(address initialOwner) public{
+    owner = initialOwner;
   }
 
   modifier onlyOwner() {
