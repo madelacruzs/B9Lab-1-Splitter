@@ -14,7 +14,7 @@ contract("Splitter", accounts => {
   [alice, bob, carol, otherAcct] = accounts;
 
   beforeEach("deploy new Splitter", function() {
-    return Splitter.new({ from: alice }).then(
+    return Splitter.new(false, { from: alice }).then(
       instance => (splitter = instance)
     );
   });
