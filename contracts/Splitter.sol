@@ -8,7 +8,7 @@ contract Splitter is Pausable {
     mapping (address => uint) public balances;
 
     event LogSplitter(address indexed sender, address indexed bob, address indexed carol, uint amount);
-    event LogWithdraw(address who);
+    event LogWithdraw(address indexed who);
 
     constructor(bool paused) public Pausable(paused, msg.sender) {
     }

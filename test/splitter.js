@@ -13,10 +13,11 @@ contract("Splitter", accounts => {
 
   [alice, bob, carol, otherAcct] = accounts;
 
-  beforeEach("deploy new Splitter", function() {
-    return Splitter.new(false, { from: alice }).then(
-      instance => (splitter = instance)
-    );
+  beforeEach("deploy new Splitter", async () => {
+    // return Splitter.new(false, { from: alice }).then(
+    //   instance => (splitter = instance)
+    // );
+    return (splitter = await Splitter.new(false, { from: alice }));
   });
 
   //members should be set

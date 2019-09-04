@@ -2,9 +2,9 @@ pragma solidity ^0.5.0;
 import './Ownable.sol';
 
 contract Pausable is Ownable {
-  event Pause(address account);
-  event Unpause(address account);
-  bool public _paused;
+  event Pause(address indexed account);
+  event Unpause(address indexed account);
+  bool _paused;
 
   constructor(bool paused, address initialOwner) Ownable (initialOwner) public {
         _paused = paused;

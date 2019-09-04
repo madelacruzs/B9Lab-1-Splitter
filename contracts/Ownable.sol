@@ -2,7 +2,7 @@ pragma solidity ^0.5.0;
 
 contract Ownable {
   
-  address public owner;
+  address owner;
 
   constructor(address initialOwner) public{
     owner = initialOwner;
